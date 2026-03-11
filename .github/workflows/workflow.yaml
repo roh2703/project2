@@ -1,31 +1,31 @@
-name: event-trigger
+name: event-trigger # name of the workflow
 on:
-  push:
+  push: # trigger the workflow on push events to the main branch
     branches:
       - main
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
+jobs: # define the jobs to be run in the workflow
+  test: # define the test job
+    runs-on: ubuntu-latest # specify the environment to run the job on
+    steps: # steps to be executed in the test job
     - name: get code
-      uses: actions/checkout@v3
-    - name: Install dependencies
-      run: npm ci
-    - name: test code
-      run: npm run test
+      uses: actions/checkout@v3 # check out the code from the repository
+    - name: Install dependencies # install the dependencies required for testing
+      run: npm ci # install dependencies using npm ci for a clean install
+    - name: test code  # run the tests using npm run test
+      run: npm run test # run the tests using npm run test
   build:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-    - name: get code
-      uses: actions/checkout@v3
-    - name: Install dependencies
-      run: npm ci
-    - name: build code
-      run: npm run build
-    - name: Publish JS filename
-      id: publish
-      run: find dist/assets/*.js -type f -execdir echo 'script-file={}' >> $GITHUB_OUTPUT ';' #
+    needs: test # specify that the build job depends on the successful completion of the test job
+    runs-on: ubuntu-latest # specify the environment to run the build job on
+    steps: # steps to be executed in the build job
+    - name: get code # check out the code from the repository
+      uses: actions/checkout@v3 # check out the code from the repository
+    - name: Install dependencies # install the dependencies required for building
+      run: npm ci # install dependencies using npm ci for a clean install
+    - name: build code # build the code
+      run: npm run build # run the build script using npm run build
+    - name: Publish JS filename # find all JavaScript files in the dist/assets directory and publish their names as output variables
+      id: publish # set an ID for this step to reference its outputs later
+      run: find dist/assets/*.js -type f -execdir echo 'script-file={}' >> $GITHUB_OUTPUT ';' # find all JavaScript files in the dist/assets directory and publish their names as output variables
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4 # upload the build artifacts to be used in the deploy job
       with:
