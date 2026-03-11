@@ -1,0 +1,46 @@
+name: event-trigger
+on:
+  push:
+  - main
+job:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: get code
+      uses: actions/checkout@v3
+    - name: Install dependencies
+      run: npm ci
+    - name: test code
+      run: npm run test
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: get code
+      uses: actions/checkout@v3
+    - name: Install dependencies
+      run: npm ci
+    - name: build code
+      run: npm run build
+    - name: Publish JS filename
+      id: publish
+      run: find dist/assets/*.js -type f -execdir echo 'script-file={}' >> $GUTHUB_OUTPUT ';' #
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4 # upload the build artifacts to be used in the deploy job
+      with:
+        name: dist-files
+        path: dist
+        
+  Deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4 # download the build artifacts from the build job
+      with:
+        name: dist-files
+    - name: Output content of dist folder
+      run: ls -la
+    - name: Deploy
+      run: echo "Deploying to production server..." # replace with actual deployment commands
+
+
+
