@@ -1,8 +1,9 @@
 name: event-trigger
 on:
   push:
-  - main
-job:
+    branches:
+      - main
+jobs:
   test:
     runs-on: ubuntu-latest
     steps:
